@@ -1,4 +1,4 @@
-package nett.server;
+package ru.arlen.echo.server;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

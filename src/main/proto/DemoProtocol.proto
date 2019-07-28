@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ru.arlen.server.proto;
+
+option optimize_for = SPEED;
+
+message DemoRequest {
+  string requestMsg = 1;
+}
+
+message DemoResponse {
+  uint32 ret = 1;
+  string responseMsg = 2;
+}

@@ -1,4 +1,4 @@
-package nett.server;
+package ru.arlen.echo.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

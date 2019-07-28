@@ -1,4 +1,4 @@
-package nett.client;
+package ru.arlen.echo.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
