@@ -36,8 +36,6 @@ public class TradeAgregateTest {
 
         result = new ArrayList<String>() {
             {
-                add("{\"ticker\":\"MSFT\",\"timeStamp\":\"2019-07-29T12:11:00Z\",\"open\":120.0,\"hight\":120.0,\"low\":102.1,\"close\":102.1,\"volume\":900}");
-                add("{\"ticker\":\"AAPL\",\"timeStamp\":\"2019-07-29T12:11:00Z\",\"open\":102.1,\"hight\":102.1,\"low\":102.1,\"close\":102.1,\"volume\":100}");
                 add("{\"ticker\":\"MSFT\",\"timeStamp\":\"2019-07-29T12:10:00Z\",\"open\":120.1,\"hight\":120.2,\"low\":120.1,\"close\":120.2,\"volume\":1500}");
                 add("{\"ticker\":\"AAPL\",\"timeStamp\":\"2019-07-29T12:10:00Z\",\"open\":101.3,\"hight\":103.2,\"low\":101.0,\"close\":103.2,\"volume\":2100}");
                 add("{\"ticker\":\"AAPL\",\"timeStamp\":\"2019-07-29T12:09:00Z\",\"open\":101.1,\"hight\":101.2,\"low\":101.1,\"close\":101.2,\"volume\":300}");

@@ -1,5 +1,6 @@
 package ru.arlen.task.server.utils;
 
+import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ru.arlen.task.proto.TaskProtocol.TaskResponse;
 import ru.arlen.task.server.core.Trade;
 
@@ -23,6 +27,7 @@ import ru.arlen.task.server.core.Trade;
  * Utils
  */
 public class Utils {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     public static final long ONE_MIN = Duration.ofMinutes(1).toMillis();
     public static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
@@ -45,24 +50,22 @@ public class Utils {
         return result;
     }
 
-    public static List<String> agregateString(List<Trade> list, int minutes, long millis)
-            throws InvalidProtocolBufferException {
+    public static List<String> agregateString(List<Trade> list, int minutes, long millis) {
         List<String> result = new ArrayList<>();
-        for (TaskResponse.Builder task : agregateBuilder(list, minutes, millis)) {
-            String jsonString = JsonFormat.printer().omittingInsignificantWhitespace().print(task.build());
-            result.add(jsonString);
+        try {
+            for (TaskResponse.Builder task : agregateBuilder(list, minutes, millis)) {
+                String jsonString = JsonFormat.printer().omittingInsignificantWhitespace().print(task.build());
+                result.add(jsonString);
+            }
+        } catch (InvalidProtocolBufferException e) {
+            logger.error("InvalidProtocolBufferException: {}", e.getMessage());
         }
         return result;
     }
 
-    public static List<TaskResponse.Builder> agregateBuilder(List<Trade> list, int minutes, long millis)
-            throws InvalidProtocolBufferException {
+    public static List<TaskResponse.Builder> agregateBuilder(List<Trade> list, int minutes, long millis) {
         List<TaskResponse.Builder> result = new ArrayList<>();
-
-        Map<String, List<Trade>> map = list.stream().filter(t -> t.getMillis() >= millis)
-                .collect(Collectors.groupingBy(t -> t.getTicker()));
-        result.addAll(getTask(map));
-        recurCalc(list, millis, minutes - 2, result);
+        recurCalc(list, getDateMillis(getDateStr(millis)), minutes, result);
         return result;
     }
 
@@ -83,9 +86,8 @@ public class Utils {
         return res;
     }
 
-    private static void recurCalc(List<Trade> list, long millis, int minutes, List<TaskResponse.Builder> result)
-            throws InvalidProtocolBufferException {
-        if (minutes <= 0)
+    private static void recurCalc(List<Trade> list, long millis, int minutes, List<TaskResponse.Builder> result) {
+        if (minutes < 0)
             return;
         Map<String, List<Trade>> map = list.stream()
                 .filter(t -> t.getMillis() >= millis - ONE_MIN && t.getMillis() < millis)

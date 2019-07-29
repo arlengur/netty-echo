@@ -14,9 +14,6 @@ public class Trade implements Cloneable {
     private double price;
     private int size;
 
-    public Trade() {
-    }
-
     public Trade(long millis, String ticker, double price, int size) {
         this.millis = millis;
         this.ticker = ticker;
@@ -28,52 +25,16 @@ public class Trade implements Cloneable {
         return this.millis;
     }
 
-    public void setMillis(long millis) {
-        this.millis = millis;
-    }
-
     public String getTicker() {
         return this.ticker;
-    }
-
-    public void setTicker(String ticker) {
-        this.ticker = ticker;
     }
 
     public double getPrice() {
         return this.price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public int getSize() {
         return this.size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public Trade millis(long millis) {
-        this.millis = millis;
-        return this;
-    }
-
-    public Trade ticker(String ticker) {
-        this.ticker = ticker;
-        return this;
-    }
-
-    public Trade price(double price) {
-        this.price = price;
-        return this;
-    }
-
-    public Trade size(int size) {
-        this.size = size;
-        return this;
     }
 
     @Override

@@ -34,7 +34,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
     long initDelay = getDateMillis(getDateStr(now + ONE_MIN)) - now;
     sf = ctx.executor().scheduleAtFixedRate(() -> {
       try {
-        agregateTask(store.getOneMTrades(), 1, System.currentTimeMillis() - ONE_MIN).stream()
+        agregateTask(store.getOneMTrades(), 1, System.currentTimeMillis()).stream()
             .forEach(task -> ctx.writeAndFlush(task));
       } catch (InvalidProtocolBufferException e) {
         logger.error("UInvalidProtocolBufferException: {}", e.getMessage());
@@ -49,7 +49,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, TaskRequest msg) throws Exception {
-    agregateTask(store.getTenMTrades(), 10, System.currentTimeMillis() - ONE_MIN).stream()
+    agregateTask(store.getTenMTrades(), 10, System.currentTimeMillis()).stream()
         .forEach(task -> ctx.write(task));
     logger.debug("User connected: {}", ctx.channel().remoteAddress());
   }
