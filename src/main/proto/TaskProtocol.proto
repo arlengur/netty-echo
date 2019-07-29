@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ru.arlen.task.proto;
+
+option optimize_for = SPEED;
+
+message TaskRequest {
+}
+
+message TaskResponse {
+  string ticker = 1;
+  string timeStamp = 2;
+  double open = 3;
+  double hight = 4;
+  double low = 5;
+  double close = 6;
+  int32 volume = 7;
+}
+
