@@ -1,7 +1,8 @@
 package ru.arlen.task.server.utils;
 
+import static ru.arlen.task.server.utils.Constants.ONE_MINUTE;
+
 import java.lang.invoke.MethodHandles;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 
@@ -28,8 +30,6 @@ import ru.arlen.task.server.core.Trade;
  */
 public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    public static final long ONE_MIN = Duration.ofMinutes(1).toMillis();
-    public static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     public static String getDateStr(long millis) {
         ZonedDateTime utc = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC);
@@ -38,16 +38,28 @@ public class Utils {
     }
 
     public static long getDateMillis(String dateStr) {
-        LocalDateTime localDateTime = LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern(DATE_PATTERN));
+        LocalDateTime localDateTime = LocalDateTime.parse(dateStr,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
         return localDateTime.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
     }
 
-    public static List<TaskResponse> agregateTask(List<Trade> list, int minutes, long millis)
-            throws InvalidProtocolBufferException {
+    public static long getNoSecMillis(long millis) {
+        return getDateMillis(getDateStr(millis));
+    }
+
+    public static List<TaskResponse> agregateOneMinTasks(List<Trade> list) {
+        return agregateTask(list, 1, System.currentTimeMillis());
+    }
+
+    public static List<TaskResponse> agregateTenMinTasks(List<Trade> list) {
+        return agregateTask(list, 2, System.currentTimeMillis());
+    }
+
+    private static List<TaskResponse> agregateTask(List<Trade> list, int minutes, long millis) {
         List<TaskResponse> result = new ArrayList<>();
         for (TaskResponse.Builder task : agregateBuilder(list, minutes, millis))
             result.add(task.build());
-        return result;
+        return Lists.reverse(result);
     }
 
     public static List<String> agregateString(List<Trade> list, int minutes, long millis) {
@@ -65,7 +77,7 @@ public class Utils {
 
     public static List<TaskResponse.Builder> agregateBuilder(List<Trade> list, int minutes, long millis) {
         List<TaskResponse.Builder> result = new ArrayList<>();
-        recurCalc(list, getDateMillis(getDateStr(millis)), minutes, result);
+        recurCalc(list, getNoSecMillis(millis), minutes, result);
         return result;
     }
 
@@ -87,12 +99,12 @@ public class Utils {
     }
 
     private static void recurCalc(List<Trade> list, long millis, int minutes, List<TaskResponse.Builder> result) {
-        if (minutes < 0)
+        if (minutes <= 0)
             return;
         Map<String, List<Trade>> map = list.stream()
-                .filter(t -> t.getMillis() >= millis - ONE_MIN && t.getMillis() < millis)
+                .filter(t -> t.getMillis() >= millis - ONE_MINUTE && t.getMillis() < millis)
                 .collect(Collectors.groupingBy(t -> t.getTicker()));
         result.addAll(getTask(map));
-        recurCalc(list, millis - ONE_MIN, minutes - 1, result);
+        recurCalc(list, millis - ONE_MINUTE, minutes - 1, result);
     }
 }

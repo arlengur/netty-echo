@@ -1,14 +1,12 @@
 package ru.arlen.task.server.serverpart;
 
-import static ru.arlen.task.server.utils.Utils.ONE_MIN;
-import static ru.arlen.task.server.utils.Utils.agregateTask;
-import static ru.arlen.task.server.utils.Utils.getDateMillis;
-import static ru.arlen.task.server.utils.Utils.getDateStr;
+import static ru.arlen.task.server.utils.Constants.ONE_MINUTE;
+import static ru.arlen.task.server.utils.Utils.agregateOneMinTasks;
+import static ru.arlen.task.server.utils.Utils.agregateTenMinTasks;
+import static ru.arlen.task.server.utils.Utils.getNoSecMillis;
 
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.TimeUnit;
-
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +29,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
   @Override
   public void channelActive(ChannelHandlerContext ctx) {
     long now = System.currentTimeMillis();
-    long initDelay = getDateMillis(getDateStr(now + ONE_MIN)) - now;
+    long initDelay = getNoSecMillis(now + ONE_MINUTE) - now;
     sf = ctx.executor().scheduleAtFixedRate(() -> {
-      try {
-        agregateTask(store.getOneMTrades(), 1, System.currentTimeMillis()).stream()
-            .forEach(task -> ctx.writeAndFlush(task));
-      } catch (InvalidProtocolBufferException e) {
-        logger.error("UInvalidProtocolBufferException: {}", e.getMessage());
-      }
-    }, initDelay, ONE_MIN, TimeUnit.MILLISECONDS);
+      agregateOneMinTasks(store.getOneMTrades()).stream().forEach(task -> ctx.writeAndFlush(task));
+    }, initDelay, ONE_MINUTE, TimeUnit.MILLISECONDS);
   }
 
   @Override
@@ -49,8 +42,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, TaskRequest msg) throws Exception {
-    agregateTask(store.getTenMTrades(), 10, System.currentTimeMillis()).stream()
-        .forEach(task -> ctx.write(task));
+    agregateTenMinTasks(store.getTenMTrades()).stream().forEach(task -> ctx.write(task));
     logger.debug("User connected: {}", ctx.channel().remoteAddress());
   }
 

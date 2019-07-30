@@ -1,22 +1,27 @@
 package ru.arlen.task.server;
 
+import static ru.arlen.task.server.utils.Constants.UPSTREAM_HOST; 
+import static ru.arlen.task.server.utils.Constants.UPSTREAM_PORT; 
+import static ru.arlen.task.server.utils.Constants.SERVER_PORT; 
+
+import java.lang.invoke.MethodHandles;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ru.arlen.task.server.clientpart.ClientInstance;
+import ru.arlen.task.server.clientpart.ServerClientInstance;
 import ru.arlen.task.server.core.InMemoryStore;
 import ru.arlen.task.server.serverpart.ServerInstance;
 
 public class Server {
-  private static final Logger logger = LoggerFactory.getLogger(Server.class);
+  private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void main(String[] args) {
     InMemoryStore store = new InMemoryStore();
 
-    ServerInstance server = new ServerInstance(8000, store);
-    ClientInstance client = new ClientInstance("127.0.0.1", 5555, store);
+    ServerInstance server = new ServerInstance(SERVER_PORT, store);
+    ServerClientInstance client = new ServerClientInstance(UPSTREAM_HOST, UPSTREAM_PORT, store);
     server.start();
     client.start();
 

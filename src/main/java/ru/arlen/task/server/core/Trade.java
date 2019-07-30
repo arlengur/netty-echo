@@ -1,10 +1,5 @@
 package ru.arlen.task.server.core;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * Trade
  */
@@ -51,13 +46,5 @@ public class Trade implements Cloneable {
     @Override
     public int hashCode() {
         return (int) (millis ^ (millis >>> 32));
-    }
-
-    @Override
-    public String toString() {
-        ZonedDateTime utc = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return "{" + " millis='" + formatter.format(utc) + "'" + ", ticker='" + ticker + "'" + ", price='" + price + "'"
-                + ", size='" + size + "'" + "}";
     }
 }

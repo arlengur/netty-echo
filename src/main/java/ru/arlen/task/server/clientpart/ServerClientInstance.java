@@ -14,16 +14,16 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import ru.arlen.task.server.core.InMemoryStore;
 
 /**
- * ClientInstance
+ * ServerClientInstance
  */
-public class ClientInstance extends Thread {
+public class ServerClientInstance extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final InMemoryStore store;
     private final String host;
     private final int port;
 
-    public ClientInstance(String host, int port, InMemoryStore store) {
+    public ServerClientInstance(String host, int port, InMemoryStore store) {
         this.host = host;
         this.port = port;
         this.store = store;
@@ -34,8 +34,8 @@ public class ClientInstance extends Thread {
         EventExecutorGroup executers = new DefaultEventExecutorGroup(4);
         try {
             Bootstrap client = new Bootstrap();
-            client.group(clientGroup).channel(NioSocketChannel.class)//.handler(new ClientInitializer());
-            .handler(new ServerClientInitializer(executers, store));
+            client.group(clientGroup).channel(NioSocketChannel.class)
+                    .handler(new ServerClientInitializer(executers, store));
             // Create client connection
             client.connect(host, port).sync().channel().closeFuture().sync();
         } catch (InterruptedException e) {
@@ -44,6 +44,6 @@ public class ClientInstance extends Thread {
             executers.shutdownGracefully();
             clientGroup.shutdownGracefully();
         }
-        logger.info("Client Stopped.");
+        logger.info("Server Client Stopped.");
     }
 }
