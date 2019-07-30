@@ -15,14 +15,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.ScheduledFuture;
 import ru.arlen.task.proto.TaskProtocol.TaskRequest;
-import ru.arlen.task.server.core.InMemoryStore;
+import ru.arlen.task.server.core.Persistent;
 
 public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final InMemoryStore store;
+  private final Persistent store;
   private ScheduledFuture<?> sf;
 
-  public ServerHandler(InMemoryStore store) {
+  public ServerHandler(Persistent store) {
     this.store = store;
   }
 
@@ -31,7 +31,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
     long now = System.currentTimeMillis();
     long initDelay = getNoSecMillis(now + ONE_MINUTE) - now;
     sf = ctx.executor().scheduleAtFixedRate(() -> {
-      agregateOneMinTasks(store.getOneMTrades()).stream().forEach(task -> ctx.writeAndFlush(task));
+      agregateOneMinTasks(store.getOneMinT()).stream().forEach(task -> ctx.writeAndFlush(task));
     }, initDelay, ONE_MINUTE, TimeUnit.MILLISECONDS);
   }
 
@@ -42,7 +42,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<TaskRequest> {
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, TaskRequest msg) throws Exception {
-    agregateTenMinTasks(store.getTenMTrades()).stream().forEach(task -> ctx.write(task));
+    agregateTenMinTasks(store.getTenMinT()).stream().forEach(task -> ctx.write(task));
     logger.debug("User connected: {}", ctx.channel().remoteAddress());
   }
 

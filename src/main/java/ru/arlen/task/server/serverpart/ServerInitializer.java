@@ -8,13 +8,13 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.util.concurrent.EventExecutorGroup;
 import ru.arlen.task.proto.TaskProtocol.TaskRequest;
-import ru.arlen.task.server.core.InMemoryStore;
+import ru.arlen.task.server.core.Persistent;
 
 public class ServerInitializer extends ChannelInitializer<SocketChannel> {
-  private final InMemoryStore store;
+  private final Persistent store;
   private final EventExecutorGroup executers;
 
-  public ServerInitializer(EventExecutorGroup executers, InMemoryStore store) {
+  public ServerInitializer(EventExecutorGroup executers, Persistent store) {
     this.store = store;
     this.executers = executers;
   }

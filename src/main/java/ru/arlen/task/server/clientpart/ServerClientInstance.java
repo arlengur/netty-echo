@@ -11,7 +11,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-import ru.arlen.task.server.core.InMemoryStore;
+import ru.arlen.task.server.core.Persistent;
 
 /**
  * ServerClientInstance
@@ -19,11 +19,11 @@ import ru.arlen.task.server.core.InMemoryStore;
 public class ServerClientInstance extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final InMemoryStore store;
+    private final Persistent store;
     private final String host;
     private final int port;
 
-    public ServerClientInstance(String host, int port, InMemoryStore store) {
+    public ServerClientInstance(String host, int port, Persistent store) {
         this.host = host;
         this.port = port;
         this.store = store;

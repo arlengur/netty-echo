@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import ru.arlen.task.server.core.InMemoryStore;
+import ru.arlen.task.server.core.Persistent;
 import ru.arlen.task.server.core.Trade;
 
 /**
@@ -22,9 +22,9 @@ import ru.arlen.task.server.core.Trade;
  */
 public class ServerClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private InMemoryStore store;
+  private Persistent store;
 
-  public ServerClientHandler(InMemoryStore store) {
+  public ServerClientHandler(Persistent store) {
     this.store = store;
   }
 

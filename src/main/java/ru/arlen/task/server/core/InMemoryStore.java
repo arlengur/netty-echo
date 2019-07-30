@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 /**
  * InMemoryStore
  */
-public class InMemoryStore {
+public class InMemoryStore implements Persistent {
     private ConcurrentLinkedQueue<Trade> store = new ConcurrentLinkedQueue<>();
 
+    @Override
     public void push(Trade trade) {
         if (!store.isEmpty() && (trade.getMillis() - store.peek().getMillis() > TEN_MINUTES)) {
             store.poll();
@@ -27,7 +28,8 @@ public class InMemoryStore {
      * 
      * @return list of trades
      */
-    public List<Trade> getTenMTrades() {
+    @Override
+    public List<Trade> getTenMinT() {
         return getCopy();
     }
 
@@ -36,7 +38,8 @@ public class InMemoryStore {
      * 
      * @return list of trades
      */
-    public List<Trade> getOneMTrades() {
+    @Override
+    public List<Trade> getOneMinT() {
         long oneMinuteBefore = getNoSecMillis(System.currentTimeMillis() - ONE_MINUTE);
         return getCopy().stream().filter(trade -> trade.getMillis() > oneMinuteBefore).collect(Collectors.toList());
     }

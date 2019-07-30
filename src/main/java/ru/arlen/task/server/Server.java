@@ -1,8 +1,8 @@
 package ru.arlen.task.server;
 
-import static ru.arlen.task.server.utils.Constants.UPSTREAM_HOST; 
-import static ru.arlen.task.server.utils.Constants.UPSTREAM_PORT; 
-import static ru.arlen.task.server.utils.Constants.SERVER_PORT; 
+import static ru.arlen.task.server.utils.Constants.SERVER_PORT;
+import static ru.arlen.task.server.utils.Constants.UPSTREAM_HOST;
+import static ru.arlen.task.server.utils.Constants.UPSTREAM_PORT;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Scanner;

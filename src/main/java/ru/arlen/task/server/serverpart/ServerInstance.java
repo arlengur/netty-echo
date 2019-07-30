@@ -12,17 +12,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-import ru.arlen.task.server.core.InMemoryStore;
+import ru.arlen.task.server.core.Persistent;
 
 /**
  * ServerInstance
  */
 public class ServerInstance extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private final InMemoryStore store;
+    private final Persistent store;
     private final int port;
 
-    public ServerInstance(int port, InMemoryStore store) {
+    public ServerInstance(int port, Persistent store) {
         this.port = port;
         this.store = store;
     }
